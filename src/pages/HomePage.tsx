@@ -4,10 +4,10 @@ import { db } from '../lib/firebase'
 import { useAuth } from '../hooks/useAuth'
 
 const QUOTES = [
-  { text: '今日の努力が、明日の自分を作る。', author: '受験の心得' },
-  { text: '諦めた瞬間、試合終了だ。', author: '― 安西先生' },
-  { text: '努力は必ず報われる。', author: '― 王貞治' },
-  { text: '夢を持ち、その夢を信じること。', author: '― 松下幸之助' },
+  { text: '今日の努力が、明日の自分を作る。', author: '潮吹きスプラッシュマウンテン' },
+  { text: '諦めた瞬間、試合終了だ。', author: '― 潮吹きスプラッシュマウンテン' },
+  { text: '努力は必ず報われる。', author: '― 潮吹きスプラッシュマウンテン' },
+  { text: '夢を持ち、その夢を信じること。', author: '― 潮吹きスプラッシュマウンテン' },
 ]
 
 function daysUntil(dateStr: string) {
