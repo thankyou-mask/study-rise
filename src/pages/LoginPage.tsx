@@ -32,7 +32,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-black text-[#FF6B35] leading-tight">
             潮吹きスプラッシュマウンテンと<br />一緒に勉強しよう！
           </h1>
-          <p className="text-sm text-gray-500 mt-3">大学受験生のための学習管理アプリ</p>
+          <p className="text-sm text-gray-500 mt-3">集中力のないADHD向けの学習アプリ</p>
         </div>
 
         {/* Googleログイン */}
