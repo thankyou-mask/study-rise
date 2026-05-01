@@ -28,7 +28,7 @@ export default function LoginPage() {
 
         {/* ロゴ */}
         <div className="text-center mb-10">
-          <p className="text-xs tracking-[4px] text-gray-500 uppercase mb-2">Tonari</p>
+          <p className="text-xs tracking-[4px] text-gray-500 uppercase mb-2">Study rise</p>
           <h1 className="text-4xl font-black text-[#FF6B35] leading-tight">
             潮吹きスプラッシュマウンテンと<br />一緒に勉強しよう！
           </h1>
