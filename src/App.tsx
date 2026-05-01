@@ -13,7 +13,7 @@ function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[#FF6B35] text-4xl font-black animate-pulse">Study Rise</div>
+        <div className="text-[#FF6B35] text-4xl font-black animate-pulse">SR</div>
       </div>
     )
   }
@@ -22,12 +22,11 @@ function App() {
 
   return (
     <div className="relative">
-      {tab === 'home'     && <HomePage />}
+      {tab === 'home'     && <HomePage onStartStudy={() => setTab('avatar')} />}
       {tab === 'avatar'   && <AvatarPage onExit={() => setTab('home')} />}
       {tab === 'records'  && <RecordsPage />}
       {tab === 'settings' && <SettingsPage />}
 
-      {/* avatarタブのときはナビを非表示 */}
       {tab !== 'avatar' && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#0E0E18] border-t border-[#2A2A35] flex h-16 z-50">
           {[

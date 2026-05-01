@@ -4,10 +4,10 @@ import { db } from '../lib/firebase'
 import { useAuth } from '../hooks/useAuth'
 
 const QUOTES = [
-  { text: '今日の努力が、明日の自分を作る。', author: '潮吹きスプラッシュマウンテン' },
-  { text: '諦めた瞬間、試合終了だ。', author: '― 潮吹きスプラッシュマウンテン' },
-  { text: '努力は必ず報われる。', author: '― 潮吹きスプラッシュマウンテン' },
-  { text: '夢を持ち、その夢を信じること。', author: '― 潮吹きスプラッシュマウンテン' },
+  { text: '今日の努力が、明日の自分を作る。', author: '受験の心得' },
+  { text: '諦めた瞬間、試合終了だ。', author: '― 安西先生' },
+  { text: '努力は必ず報われる。', author: '― 王貞治' },
+  { text: '夢を持ち、その夢を信じること。', author: '― 松下幸之助' },
 ]
 
 function daysUntil(dateStr: string) {
@@ -17,7 +17,7 @@ function daysUntil(dateStr: string) {
   return Math.max(0, Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
 }
 
-export default function HomePage() {
+export default function HomePage({ onStartStudy }: { onStartStudy: () => void }) {
   const { user, logout } = useAuth()
   const [profile, setProfile] = useState<any>(null)
   const [quoteIdx, setQuoteIdx] = useState(0)
@@ -99,7 +99,10 @@ export default function HomePage() {
         </button>
 
         {/* 学習開始ボタン */}
-        <button className="w-full bg-gradient-to-r from-[#FF6B35] to-[#FF3A00] rounded-2xl py-4 font-black text-lg shadow-lg shadow-orange-900/30">
+        <button
+          onClick={onStartStudy}
+          className="w-full bg-gradient-to-r from-[#FF6B35] to-[#FF3A00] rounded-2xl py-4 font-black text-lg shadow-lg shadow-orange-900/30"
+        >
           ⚡ 今すぐ学習開始
         </button>
 
