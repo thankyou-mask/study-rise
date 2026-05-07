@@ -9,21 +9,19 @@ const COLORS: Record<string, string> = {
 
 export default function SettingsPage() {
   const { user, logout } = useAuth()
-  const [tab, setTab]                   = useState<'profile' | 'mypage'>('mypage')
-  const [profile, setProfile]           = useState<any>(null)
-  const [records, setRecords]           = useState<any[]>([])
+  const [tab, setTab]                       = useState<'profile' | 'mypage'>('mypage')
+  const [records, setRecords]               = useState<any[]>([])
   const [universityName, setUniversityName] = useState('')
-  const [examDate, setExamDate]         = useState('')
+  const [examDate, setExamDate]             = useState('')
   const [dailyGoalHours, setDailyGoalHours] = useState(6)
-  const [displayName, setDisplayName]   = useState('')
-  const [saved, setSaved]               = useState(false)
+  const [displayName, setDisplayName]       = useState('')
+  const [saved, setSaved]                   = useState(false)
 
   useEffect(() => {
     if (!user) return
     getDoc(doc(db, 'users', user.uid)).then(snap => {
       if (snap.exists()) {
         const d = snap.data()
-        setProfile(d)
         setUniversityName(d.universityName ?? '')
         setExamDate(d.examDate ?? '')
         setDailyGoalHours(d.dailyGoalHours ?? 6)
