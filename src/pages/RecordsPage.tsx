@@ -90,7 +90,7 @@ export default function RecordsPage() {
       {/* 手動入力フォーム */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.7)' }} onClick={() => setShowForm(false)}>
-          <div className="bg-[#13131A] border border-[#2A2A35] rounded-t-3xl p-6 w-full" onClick={e => e.stopPropagation()}>
+          <div className="bg-[#13131A] border border-[#2A2A35] rounded-t-3xl p-6 w-full" style={{ maxHeight: '80vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-[#2A2A35] rounded-full mx-auto mb-6" />
             <h2 className="text-lg font-black mb-4">学習を記録する</h2>
 
