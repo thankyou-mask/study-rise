@@ -13,7 +13,7 @@ function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[#FF6B35] text-4xl font-black animate-pulse">SR</div>
+        <div className="text-[#FF6B35] text-4xl font-black animate-pulse">Study Rise</div>
       </div>
     )
   }
