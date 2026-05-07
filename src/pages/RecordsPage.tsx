@@ -89,8 +89,16 @@ export default function RecordsPage() {
 
       {/* 手動入力フォーム */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.7)' }} onClick={() => setShowForm(false)}>
-          <div className="bg-[#13131A] border border-[#2A2A35] rounded-t-3xl p-6 w-full" style={{ maxHeight: '80vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: 'rgba(0,0,0,0.8)' }}
+          onClick={() => setShowForm(false)}
+        >
+          <div
+            className="bg-[#13131A] border border-[#2A2A35] rounded-3xl p-6 w-full"
+            style={{ maxHeight: '90vh', overflowY: 'auto' }}
+            onClick={e => e.stopPropagation()}
+          >
             <div className="w-10 h-1 bg-[#2A2A35] rounded-full mx-auto mb-6" />
             <h2 className="text-lg font-black mb-4">学習を記録する</h2>
 
@@ -115,7 +123,7 @@ export default function RecordsPage() {
 
             {/* 時間入力 */}
             <p className="text-xs text-gray-500 mb-2">学習時間</p>
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               <div className="flex-1 bg-[#0D0D0F] border border-[#2A2A35] rounded-xl p-3 flex items-center gap-2">
                 <input
                   type="number"
@@ -163,6 +171,7 @@ export default function RecordsPage() {
               className="w-full bg-[#0D0D0F] border border-[#2A2A35] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#FF6B35] transition-colors resize-none mb-4"
             />
 
+            {/* 記録ボタン */}
             <button
               onClick={handleSave}
               disabled={saving}
@@ -170,6 +179,14 @@ export default function RecordsPage() {
               style={{ background: 'linear-gradient(135deg, #FF6B35, #FF3A00)' }}
             >
               {saving ? '保存中...' : '記録する'}
+            </button>
+
+            {/* キャンセル */}
+            <button
+              onClick={() => setShowForm(false)}
+              className="w-full py-3 rounded-2xl text-sm text-gray-500 mt-2"
+            >
+              キャンセル
             </button>
           </div>
         </div>
@@ -192,12 +209,15 @@ export default function RecordsPage() {
             const mins2 = (byDate[date] || []).reduce((a: number, r: any) => a + r.minutes, 0)
             const isToday = date === getToday()
             return (
-              <div key={date} className="h-9 rounded-lg flex items-center justify-center text-xs font-bold"
+              <div
+                key={date}
+                className="h-9 rounded-lg flex items-center justify-center text-xs font-bold"
                 style={{
                   background: isToday ? '#FF6B35' : mins2 >= 60 ? '#FF6B3588' : mins2 > 0 ? '#FF6B3533' : '#1E1E28',
                   color: isToday ? '#fff' : mins2 > 0 ? '#FF6B35' : '#444',
                   border: isToday ? '2px solid #FF6B35' : '2px solid transparent',
-                }}>
+                }}
+              >
                 {new Date(date + 'T00:00:00').getDate()}
               </div>
             )
@@ -215,8 +235,10 @@ export default function RecordsPage() {
               <span className="text-gray-500">{Math.floor(m / 60)}h{m % 60}m</span>
             </div>
             <div className="bg-[#0D0D0F] rounded-full h-1.5 overflow-hidden">
-              <div className="h-full rounded-full transition-all duration-700"
-                style={{ width: `${(m / maxMinutes) * 100}%`, background: COLORS[s] }} />
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${(m / maxMinutes) * 100}%`, background: COLORS[s] }}
+              />
             </div>
           </div>
         ))}
