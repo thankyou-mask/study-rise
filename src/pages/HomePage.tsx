@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useAuth } from '../hooks/useAuth'
 
@@ -10,6 +10,10 @@ const QUOTES = [
   { text: '夢を持ち、その夢を信じること。', author: '― 松下幸之助' },
 ]
 
+function getToday() {
+  return new Date().toISOString().slice(0, 10)
+}
+
 function daysUntil(dateStr: string) {
   const target = new Date(dateStr)
   const today = new Date()
@@ -17,9 +21,22 @@ function daysUntil(dateStr: string) {
   return Math.max(0, Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
 }
 
+function calcStreak(records: any[]) {
+  const days = [...new Set(records.map(r => r.date))].sort().reverse()
+  let s = 0
+  const d = new Date()
+  for (let i = 0; i < 30; i++) {
+    const key = d.toISOString().slice(0, 10)
+    if (days.includes(key)) { s++; d.setDate(d.getDate() - 1) }
+    else break
+  }
+  return s
+}
+
 export default function HomePage({ onStartStudy }: { onStartStudy: () => void }) {
   const { user, logout } = useAuth()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile]   = useState<any>(null)
+  const [records, setRecords]   = useState<any[]>([])
   const [quoteIdx, setQuoteIdx] = useState(0)
 
   useEffect(() => {
@@ -27,9 +44,28 @@ export default function HomePage({ onStartStudy }: { onStartStudy: () => void })
     getDoc(doc(db, 'users', user.uid)).then(snap => {
       if (snap.exists()) setProfile(snap.data())
     })
+    fetchRecords()
     setQuoteIdx(Math.floor(Math.random() * QUOTES.length))
   }, [user])
 
+  async function fetchRecords() {
+    if (!user) return
+    const q = query(
+      collection(db, 'studyRecords'),
+      where('uid', '==', user.uid)
+    )
+    const snap = await getDocs(q)
+    setRecords(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+  }
+
+  const today = getToday()
+  const todayMinutes = records
+    .filter(r => r.date === today)
+    .reduce((a, r) => a + r.minutes, 0)
+  const totalMinutes = records.reduce((a, r) => a + r.minutes, 0)
+  const streak = calcStreak(records)
+  const dailyGoal = (profile?.dailyGoalHours ?? 6) * 60
+  const progressPct = Math.min(100, Math.round((todayMinutes / dailyGoal) * 100))
   const daysLeft = profile ? daysUntil(profile.examDate) : 0
 
   return (
@@ -38,7 +74,7 @@ export default function HomePage({ onStartStudy }: { onStartStudy: () => void })
       {/* ヘッダー */}
       <div className="flex justify-between items-start px-5 pt-12 pb-4">
         <div>
-          <p className="text-xs text-gray-500 tracking-widest uppercase mb-1">おはよう</p>
+          <p className="text-xs text-gray-500 tracking-widest uppercase mb-1">おはよう 👋</p>
           <h1 className="text-xl font-black">{profile?.displayName ?? user?.email}</h1>
         </div>
         <button
@@ -63,15 +99,19 @@ export default function HomePage({ onStartStudy }: { onStartStudy: () => void })
         {/* 統計3つ */}
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-[#13131A] border border-[#2A2A35] rounded-2xl p-3 text-center">
-            <p className="text-2xl font-black text-[#FF6B35]">0🔥</p>
+            <p className="text-2xl font-black text-[#FF6B35]">{streak}🔥</p>
             <p className="text-[10px] text-gray-500 mt-1">連続日数</p>
           </div>
           <div className="bg-[#13131A] border border-[#2A2A35] rounded-2xl p-3 text-center">
-            <p className="text-lg font-black text-[#4ECDC4]">0h</p>
+            <p className="text-lg font-black text-[#4ECDC4]">
+              {Math.floor(todayMinutes / 60)}h{todayMinutes % 60}m
+            </p>
             <p className="text-[10px] text-gray-500 mt-1">今日</p>
           </div>
           <div className="bg-[#13131A] border border-[#2A2A35] rounded-2xl p-3 text-center">
-            <p className="text-lg font-black text-[#FFD93D]">0h</p>
+            <p className="text-lg font-black text-[#FFD93D]">
+              {Math.floor(totalMinutes / 60)}h
+            </p>
             <p className="text-[10px] text-gray-500 mt-1">累計</p>
           </div>
         </div>
@@ -83,15 +123,18 @@ export default function HomePage({ onStartStudy }: { onStartStudy: () => void })
             <p className="text-xs text-gray-500">{profile?.dailyGoalHours ?? 6}時間目標</p>
           </div>
           <div className="bg-[#0D0D0F] rounded-full h-2 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#FF6B35] to-[#FFD93D] rounded-full w-0" />
+            <div
+              className="h-full bg-gradient-to-r from-[#FF6B35] to-[#FFD93D] rounded-full transition-all duration-700"
+              style={{ width: `${progressPct}%` }}
+            />
           </div>
-          <p className="text-xs text-[#FF6B35] text-right mt-1">0% 達成</p>
+          <p className="text-xs text-[#FF6B35] text-right mt-1">{progressPct}% 達成</p>
         </div>
 
         {/* 名言 */}
         <button
           onClick={() => setQuoteIdx((quoteIdx + 1) % QUOTES.length)}
-          className="bg-[#13131A] border-l-4 border-[#FF6B35] border-y border-r border-[#2A2A35] rounded-2xl p-4 text-left w-full"
+          className="bg-[#13131A] border-l-4 border-[#FF6B35] rounded-2xl p-4 text-left w-full"
         >
           <p className="text-[10px] text-[#FF6B35] tracking-widest mb-2">TODAY'S FUEL</p>
           <p className="text-sm italic leading-relaxed">「{QUOTES[quoteIdx].text}」</p>
